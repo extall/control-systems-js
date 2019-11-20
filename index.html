@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Control Systems Toolbox Javascript library tests</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <!-- Base library for math -->
+        <script src="lib/math.min.js" type="text/javascript"></script>
+        
+        <!-- Additional facilities -->
+        <script src="lib/misc-math.js" type="text/javascript"></script>
+        
+        <!-- 2D visualization library: D3.js -->
+        <script src="lib/d3.min.js" type="text/javascript"></script>
+        <script src="lib/d3-simple-slider.min.js" type="text/javascript"></script>
+        
+        <!-- WebGL visualization library: MathBox2 -->
+        <script src="lib/mathbox-bundle.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="css/mathbox.css">
+        
+        <!-- Math typesetting: KaTeX -->
+        <script src="katex/katex.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="katex/katex.min.css">
+        
+        <!-- Control Systems Toolbox library -->
+        <script src="lib/control-toolbox.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <!-- Add your site or application content here -->
+        <h3>Control Systems Toolbox for JavaScript</h3>
+        <p>Test page</p>
+
+        <script type="text/javascript">
+           // Log to console
+           var A = [
+               [-0.3115, -0.0217, -0.0082],
+               [-0.0217, -1.6174, 0.5179],
+               [-0.0082, 0.5179, -0.5199]
+               ];
+               
+           var B = [
+                  [1.101],
+                  [1.544],
+                  [0.08593]
+               ];
+               
+           var C = [
+               [-1.4916, -1.0616, -0.6156],
+               [-0.7423, 0, 0.7481]
+               ];
+               
+           var D = [[0],
+                    [0.8886]];
+                
+           var sys = new cst.ss(A,B,C,D);
+           console.log(sys);
+           
+           // Compute eigenvalues: failcase
+           console.log("Will fail here, kill the browser...");
+           a = [[3, -2], [4, -1]];
+           //console.log(cst.eig(a));
+           
+           // Try something different
+           var m = a.slice();
+           for (var k=0; k<1000; k++){
+               var d = math.qr(m);
+               var q = d.Q;
+               var r = d.R;
+               m = math.multiply(r,q);
+           }
+           
+           console.log(m);
+           console.log(q);
+           console.log(r);
+   
+        </script>
+
+    </body>
+</html>
