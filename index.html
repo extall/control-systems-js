@@ -88,6 +88,15 @@
             console.log("Computing eigenvalues for...");
             console.log(a);
             console.log(cst.eig(a));
+            
+            // Test conversion
+            console.log("Converting tf 2 ss...");
+            var G = cst.tf([1],[1,1]);
+            var sys1 = G.tf2ss();
+            
+            console.log("Converting another one...");
+            var G1 = cst.tf([2.5,1], [4,5,9,1]);
+            sys2 = G1.tf2ss();
 
 
         </script>
