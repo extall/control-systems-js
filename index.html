@@ -94,6 +94,14 @@
             var G = cst.tf([1],[1,1]);
             var sys1 = G.tf2ss();
             
+            // Try to simulate tf
+            console.log("Simulating tf...");
+            var t1=performance.now();
+            var yy = sys1.lsim(1, cst.colon(0,0.1,100));
+            var t2=performance.now();
+            console.log(yy);
+            console.log("took ", (t2-t1), "ms to simulate 1000 points");
+            
             console.log("Converting another one...");
             var G1 = cst.tf([2.5,1], [4,5,9,1]);
             sys2 = G1.tf2ss();
