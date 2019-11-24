@@ -22,19 +22,17 @@
         <!-- jQuery -->
         <script src="lib/jquery-3.4.1.min.js" type="text/javascript"></script>
 
-        <!-- D3 function plot -->
-        <script src="lib/function-plot.js" type="text/javascript"></script>
-
         <!-- Additional facilities -->
         <script src="lib/misc-math.js" type="text/javascript"></script>
 
-        <!-- 2D visualization library: D3.js -->
-        <!--
+        <!-- 2D visualization libraries: D3.js v3 and v4 and functionPlot. -->
+        <!-- TODO: should load only one d3.js script -->
         <script src="lib/d3.v3.min.js" type="text/javascript"></script>
+        <script src="lib/function-plot.js" type="text/javascript"></script>
+        <script type="text/javascript">window.d3v3 = d3; window.d3 = null;</script>
+        <script src="lib/d3.v4.min.js" type="text/javascript"></script>
+        <script type="text/javascript">window.d3v4 = d3;</script>
         <script src="lib/d3-simple-slider.min.js" type="text/javascript"></script>
-        -->
-        <script src="https://unpkg.com/d3@3/d3.min.js"></script>
-        <script src="https://unpkg.com/function-plot@1/dist/function-plot.js"></script>
 
         <!-- WebGL visualization library: MathBox2 -->
         <script src="lib/mathbox-bundle.min.js" type="text/javascript"></script>
@@ -46,6 +44,10 @@
 
         <!-- Control Systems Toolbox library -->
         <script src="lib/control-toolbox.js" type="text/javascript"></script>
+
+        <!-- Plotting library -->
+        <script src="lib/cst-graphics.js" type="text/javascript"></script>
+
     </head>
     <body>
         <!--[if lt IE 8]>
@@ -54,95 +56,139 @@
 
         <!-- Add your site or application content here -->
         <div class="main">
-            <h3>Control Systems Toolbox for JavaScript</h3>
-            <p>Test page</p>
-            <h4>Linear system simulation</h4>
-            <div id="graph1" style="width: 600px; height: 400px;"></div>
-
+            <h2>Control Systems Toolbox for JavaScript</h2>
+            <p>Below is a test page for the CST library. Some things are currently only showing up in console (F12), so check that out.</p>
+            <h3>Linear system simulation</h3>
+            <div id="graph1" style="width: 1000px; height: 700px;"></div>
+            <h3>Bode plot of simple transfer function</h3>
+            <div id="graph2" style="width: 1000px; height: 700px;"></div>
+            
             <script type="text/javascript">
-                // Log to console
-                var A = [
-                    [-0.3115, -0.0217, -0.0082],
-                    [-0.0217, -1.6174, 0.5179],
-                    [-0.0082, 0.5179, -0.5199]
-                ];
+            // Log to console
+            var A = [
+                [-0.3115, -0.0217, -0.0082],
+                [-0.0217, -1.6174, 0.5179],
+                [-0.0082, 0.5179, -0.5199]
+            ];
 
-                var B = [
-                    [1.101],
-                    [1.544],
-                    [0.08593]
-                ];
+            var B = [
+                [1.101],
+                [1.544],
+                [0.08593]
+            ];
 
-                var C = [
-                    [-1.4916, -1.0616, -0.6156],
-                    [-0.7423, 0, 0.7481]
-                ];
+            var C = [
+                [-1.4916, -1.0616, -0.6156],
+                [-0.7423, 0, 0.7481]
+            ];
 
-                var D = [[0],
-                    [0.8886]];
+            var D = [[0],
+                [0.8886]];
 
-                var sys = new cst.ss(A, B, C, D);
-                console.log(sys);
+            var sys = new cst.ss(A, B, C, D);
+            console.log(sys);
 
-                console.log("Simulating and drawing");
-                
-                // TODO: there is ambiguity with respect to matrix shapes
-                // must be fixed in BETA
-                var t1 = cst.colon(0, 0.1, 100);
-                var y1 = sys.lsim(1, t1);
-                var toplot = math.concat(math.transpose([t1]), math.transpose([y1[0]]));
-                console.log(toplot);
+            console.log("Simulating and drawing");
 
-                // Plot
-                functionPlot({
-                    target: '#graph1',
-                    data: [{
-                            points: toplot,
-                            fnType: 'points',
-                            graphType: 'polyline'
-                        }]
-                })
+            // TODO: there is ambiguity with respect to matrix shapes
+            // must be fixed in BETA
+            var t1 = cst.colon(0, 0.1, 100);
+            var y1 = sys.lsim(1, t1);
+            var toplot = math.concat(math.transpose(t1), math.transpose([y1[0]]));
+            console.log(toplot);
 
+            // Plot
+            var fig1 = csg.plot({
+                target: '#graph1',
+                width: 1000,
+                height: 700,
+                xAxis: {
+                    label: 'Time [s]',
+                    domain: [0, 100]
+                },
+                yAxis: {
+                    label: 'System output: y1',
+                    domain: [-10, 0]
+                },
+                grid: true,
+                disableZoom: true,
+                data: [{
+                        points: toplot,
+                        fnType: 'points',
+                        graphType: 'polyline'
+                    }]
+            });
 
-                // Compute eigenvalues
-                a = [[3, -2], [4, -1]];
+            // Compute eigenvalues
+            a = [[3, -2], [4, -1]];
 
-                console.log("Computing eigenvalues for...");
-                console.log(a);
-                console.log(cst.eig(a));
+            console.log("Computing eigenvalues for...");
+            console.log(a);
+            console.log(cst.eig(a));
 
-                a = [[7, 3, 4, 11, -9, -2],
-                    [-6, 4, -5, 7, 1, 12],
-                    [-1, -9, 2, 2, 9, 1],
-                    [-8, 0, -1, 5, 0, 8],
-                    [-4, 3, -5, 7, 2, 10],
-                    [6, 1, 4, -11, -7, -1]];
+            a = [[7, 3, 4, 11, -9, -2],
+                [-6, 4, -5, 7, 1, 12],
+                [-1, -9, 2, 2, 9, 1],
+                [-8, 0, -1, 5, 0, 8],
+                [-4, 3, -5, 7, 2, 10],
+                [6, 1, 4, -11, -7, -1]];
 
-                console.log("Computing eigenvalues for...");
-                console.log(a);
-                console.log(cst.eig(a));
+            console.log("Computing eigenvalues for...");
+            console.log(a);
+            console.log(cst.eig(a));
 
-                a = [[0, 1, 0], [0, 0, 1], [1, 0, 0]];
-                console.log("Computing eigenvalues for...");
-                console.log(a);
-                console.log(cst.eig(a));
+            a = [[0, 1, 0], [0, 0, 1], [1, 0, 0]];
+            console.log("Computing eigenvalues for...");
+            console.log(a);
+            console.log(cst.eig(a));
 
-                // Test conversion
-                console.log("Converting tf 2 ss...");
-                var G = cst.tf([1], [1, 1]);
-                var sys1 = G.tf2ss();
+            // Test conversion
+            console.log("Converting tf 2 ss...");
+            var G = cst.tf([1], [1, 1]);
+            var sys1 = G.tf2ss();
+            
+            // Test freq domain chars
+            console.log("Computing freq domain chars of simple TF");
+            var w = cst.logspace(-3,3,100);
+            var rr = G.freqresp(w);
+            var mp = cst.to_magph(rr);
+            
+            // Plot
+            var toplot = math.concat(math.transpose(w), math.transpose([mp[0]]));
+            console.log(toplot);
+            var fig2 = csg.plot({
+                target: '#graph2',
+                width: 1000,
+                height: 700,
+                xAxis: {
+                    type: "log",
+                    label: 'Freq [rad/s]',
+                    domain: [0.001, 1000]
+                },
+                yAxis: {
+                    label: 'Magnitude [dB]',
+                    domain: [-50, 10]
+                },
+                grid: true,
+                disableZoom: true,
+                data: [{
+                        points: toplot,
+                        fnType: 'points',
+                        graphType: 'polyline'
+                    }]
+            });
 
-                // Try to simulate tf
-                console.log("Simulating tf...");
-                var t1 = performance.now();
-                var yy = sys1.lsim(1, cst.colon(0, 0.1, 100));
-                var t2 = performance.now();
-                console.log(yy);
-                console.log("took ", (t2 - t1), "ms to simulate 1000 points");
+            // Try to simulate tf
+            console.log("Simulating tf...");
+            var t1 = performance.now();
+            var yy = sys1.lsim(1, cst.colon(0, 0.1, 100));
+            var t2 = performance.now();
+            console.log(yy);
+            console.log("took ", (t2 - t1), "ms to simulate 1000 points");
 
-                console.log("Converting another one...");
-                var G1 = cst.tf([2.5, 1], [4, 5, 9, 1]);
-                sys2 = G1.tf2ss();
+            console.log("Converting another one...");
+            var G1 = cst.tf([2.5, 1], [4, 5, 9, 1]);
+            sys2 = G1.tf2ss();
 
 
             </script>
