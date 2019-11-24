@@ -10,16 +10,31 @@
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
 
-        <!-- Base library for math -->
+        <!-- Base libraries for math -->
         <script src="lib/math.min.js" type="text/javascript"></script>
+        <script src="lib/jmat.min.js" type="text/javascript"></script>
+
+        <!-- UI library: UIkit -->
+        <script src="lib/uikit.min.js" type="text/javascript"></script>
+        <script src="lib/uikit-icons.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="css/uikit.min.css">
+
+        <!-- jQuery -->
+        <script src="lib/jquery-3.4.1.min.js" type="text/javascript"></script>
+
+        <!-- D3 function plot -->
+        <script src="lib/function-plot.js" type="text/javascript"></script>
 
         <!-- Additional facilities -->
         <script src="lib/misc-math.js" type="text/javascript"></script>
-        <script src="lib/jmat.min.js" type="text/javascript"></script>
 
         <!-- 2D visualization library: D3.js -->
-        <script src="lib/d3.min.js" type="text/javascript"></script>
+        <!--
+        <script src="lib/d3.v3.min.js" type="text/javascript"></script>
         <script src="lib/d3-simple-slider.min.js" type="text/javascript"></script>
+        -->
+        <script src="https://unpkg.com/d3@3/d3.min.js"></script>
+        <script src="https://unpkg.com/function-plot@1/dist/function-plot.js"></script>
 
         <!-- WebGL visualization library: MathBox2 -->
         <script src="lib/mathbox-bundle.min.js" type="text/javascript"></script>
@@ -38,76 +53,101 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <h3>Control Systems Toolbox for JavaScript</h3>
-        <p>Test page</p>
+        <div class="main">
+            <h3>Control Systems Toolbox for JavaScript</h3>
+            <p>Test page</p>
+            <h4>Linear system simulation</h4>
+            <div id="graph1" style="width: 600px; height: 400px;"></div>
 
-        <script type="text/javascript">
-            // Log to console
-            var A = [
-                [-0.3115, -0.0217, -0.0082],
-                [-0.0217, -1.6174, 0.5179],
-                [-0.0082, 0.5179, -0.5199]
-            ];
+            <script type="text/javascript">
+                // Log to console
+                var A = [
+                    [-0.3115, -0.0217, -0.0082],
+                    [-0.0217, -1.6174, 0.5179],
+                    [-0.0082, 0.5179, -0.5199]
+                ];
 
-            var B = [
-                [1.101],
-                [1.544],
-                [0.08593]
-            ];
+                var B = [
+                    [1.101],
+                    [1.544],
+                    [0.08593]
+                ];
 
-            var C = [
-                [-1.4916, -1.0616, -0.6156],
-                [-0.7423, 0, 0.7481]
-            ];
+                var C = [
+                    [-1.4916, -1.0616, -0.6156],
+                    [-0.7423, 0, 0.7481]
+                ];
 
-            var D = [[0],
-                [0.8886]];
+                var D = [[0],
+                    [0.8886]];
 
-            var sys = new cst.ss(A, B, C, D);
-            console.log(sys);
+                var sys = new cst.ss(A, B, C, D);
+                console.log(sys);
 
-            // Compute eigenvalues
-            a = [[3, -2], [4, -1]];
+                console.log("Simulating and drawing");
+                
+                // TODO: there is ambiguity with respect to matrix shapes
+                // must be fixed in BETA
+                var t1 = cst.colon(0, 0.1, 100);
+                var y1 = sys.lsim(1, t1);
+                var toplot = math.concat(math.transpose([t1]), math.transpose([y1[0]]));
+                console.log(toplot);
 
-            console.log("Computing eigenvalues for...");
-            console.log(a);
-            console.log(cst.eig(a));
-
-            a = [[7, 3, 4, 11, -9, -2],
-                [-6, 4, -5, 7, 1, 12],
-                [-1, -9, 2, 2, 9, 1],
-                [-8, 0, -1, 5, 0, 8],
-                [-4, 3, -5, 7, 2, 10],
-                [6, 1, 4, -11, -7, -1]];
-
-            console.log("Computing eigenvalues for...");
-            console.log(a);
-            console.log(cst.eig(a));
-            
-            a = [[0,1,0],[0,0,1],[1,0,0]];
-            console.log("Computing eigenvalues for...");
-            console.log(a);
-            console.log(cst.eig(a));
-            
-            // Test conversion
-            console.log("Converting tf 2 ss...");
-            var G = cst.tf([1],[1,1]);
-            var sys1 = G.tf2ss();
-            
-            // Try to simulate tf
-            console.log("Simulating tf...");
-            var t1=performance.now();
-            var yy = sys1.lsim(1, cst.colon(0,0.1,100));
-            var t2=performance.now();
-            console.log(yy);
-            console.log("took ", (t2-t1), "ms to simulate 1000 points");
-            
-            console.log("Converting another one...");
-            var G1 = cst.tf([2.5,1], [4,5,9,1]);
-            sys2 = G1.tf2ss();
+                // Plot
+                functionPlot({
+                    target: '#graph1',
+                    data: [{
+                            points: toplot,
+                            fnType: 'points',
+                            graphType: 'polyline'
+                        }]
+                })
 
 
-        </script>
+                // Compute eigenvalues
+                a = [[3, -2], [4, -1]];
+
+                console.log("Computing eigenvalues for...");
+                console.log(a);
+                console.log(cst.eig(a));
+
+                a = [[7, 3, 4, 11, -9, -2],
+                    [-6, 4, -5, 7, 1, 12],
+                    [-1, -9, 2, 2, 9, 1],
+                    [-8, 0, -1, 5, 0, 8],
+                    [-4, 3, -5, 7, 2, 10],
+                    [6, 1, 4, -11, -7, -1]];
+
+                console.log("Computing eigenvalues for...");
+                console.log(a);
+                console.log(cst.eig(a));
+
+                a = [[0, 1, 0], [0, 0, 1], [1, 0, 0]];
+                console.log("Computing eigenvalues for...");
+                console.log(a);
+                console.log(cst.eig(a));
+
+                // Test conversion
+                console.log("Converting tf 2 ss...");
+                var G = cst.tf([1], [1, 1]);
+                var sys1 = G.tf2ss();
+
+                // Try to simulate tf
+                console.log("Simulating tf...");
+                var t1 = performance.now();
+                var yy = sys1.lsim(1, cst.colon(0, 0.1, 100));
+                var t2 = performance.now();
+                console.log(yy);
+                console.log("took ", (t2 - t1), "ms to simulate 1000 points");
+
+                console.log("Converting another one...");
+                var G1 = cst.tf([2.5, 1], [4, 5, 9, 1]);
+                sys2 = G1.tf2ss();
+
+
+            </script>
+        </div>
+
 
     </body>
 </html>

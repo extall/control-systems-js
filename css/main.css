@@ -16,7 +16,7 @@ html {
     line-height: 1.4;
 }
 
-body {
+body div.main {
     margin: 5%;
 }
 
