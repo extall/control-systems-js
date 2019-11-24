@@ -61,7 +61,8 @@
             <h3>Linear system simulation</h3>
             <div id="graph1" style="width: 1000px; height: 700px;"></div>
             <h3>Bode plot of simple transfer function</h3>
-            <div id="graph2" style="width: 1000px; height: 700px;"></div>
+            <div id="graph21" style="width: 1000px; height: 350px;"></div>
+            <div id="graph22" style="width: 1000px; height: 350px;"></div>
             
             <script type="text/javascript">
             // Log to console
@@ -157,9 +158,9 @@
             var toplot = math.concat(math.transpose(w), math.transpose([mp[0]]));
             console.log(toplot);
             var fig2 = csg.plot({
-                target: '#graph2',
+                target: '#graph21',
                 width: 1000,
-                height: 700,
+                height: 350,
                 xAxis: {
                     type: "log",
                     label: 'Freq [rad/s]',
@@ -168,6 +169,30 @@
                 yAxis: {
                     label: 'Magnitude [dB]',
                     domain: [-50, 10]
+                },
+                grid: true,
+                disableZoom: true,
+                data: [{
+                        points: toplot,
+                        fnType: 'points',
+                        graphType: 'polyline'
+                    }]
+            });
+            
+            var toplot = math.concat(math.transpose(w), math.transpose([mp[1]]));
+            
+            var fig3 = csg.plot({
+                target: '#graph22',
+                width: 1000,
+                height: 350,
+                xAxis: {
+                    type: "log",
+                    label: 'Freq [rad/s]',
+                    domain: [0.001, 1000]
+                },
+                yAxis: {
+                    label: 'Phase [deg]',
+                    domain: [-90, 10]
                 },
                 grid: true,
                 disableZoom: true,
