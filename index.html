@@ -189,11 +189,10 @@
                 console.log("Computing freq domain chars of simple TF");
                 var w = cst.logspace(-4, 4, 100);
                 var rr = G1.freqresp(w);
-                var mp = cst.to_magph(rr);
+                var mp = cst.to_magph(rr,undefined,true);
 
                 // Plot
                 var toplot = math.concat(math.transpose(w), math.transpose([mp[0]]));
-                console.log(toplot);
                 var fig2 = csg.plot({
                     target: '#graph21',
                     width: 1000,
@@ -252,9 +251,7 @@
                     // Recompute/plot freq response
                     var w = cst.logspace(-4, 4, 100);
                     var rr = G1.freqresp(w);
-                    console.log(rr);
-                    var mp = cst.to_magph(rr);
-                    console.log(mp);
+                    var mp = cst.to_magph(rr,undefined,true);
 
                     // Plot
                     var toplot = math.concat(math.transpose(w), math.transpose([mp[0]]));
