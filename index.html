@@ -89,14 +89,24 @@
                 [0.8886]];
 
             var sys = new cst.ss(A, B, C, D);
-            
+
             // Render the state space system
             csg.render_disp_unnum_ss(sys, ".matrix-sys");
-            
+
             </script>
 
             <div id="graph1" style="width: 1000px; height: 700px;"></div>
             <h3>Bode plot of simple transfer function</h3>
+            <p>The transfer function itself is given by</p>
+            <div class="tf-sys"></div>
+            <p>We may want to change this transfer function, one of the factors in the pole poly...</p>
+            <form>
+                <input id="change-tf-param" class="uk-range" type="range"
+                       value="5" min="1" max="9" step="0.1">
+            </form>
+
+
+            <p>And it has the following frequency domain characteristic (Bode diagram).</p>
             <div id="graph21" style="width: 1000px; height: 350px;"></div>
             <div id="graph22" style="width: 1000px; height: 350px;"></div>
 
@@ -163,10 +173,22 @@
                 var G = cst.tf([1], [1, 1]);
                 var sys1 = G.tf2ss();
 
+                // Try to simulate tf
+                console.log("Simulating tf...");
+                var t1 = performance.now();
+                var yy = sys1.lsim(1, cst.colon(0, 0.1, 100));
+                var t2 = performance.now();
+                console.log(yy);
+                console.log("took ", (t2 - t1), "ms to simulate 1000 points");
+
+                console.log("Converting another one...");
+                var G1 = cst.tf([2.5, 1], [4, 5, 9, 1]);
+                sys2 = G1.tf2ss();
+
                 // Test freq domain chars
                 console.log("Computing freq domain chars of simple TF");
-                var w = cst.logspace(-3, 3, 100);
-                var rr = G.freqresp(w);
+                var w = cst.logspace(-4, 4, 100);
+                var rr = G1.freqresp(w);
                 var mp = cst.to_magph(rr);
 
                 // Plot
@@ -179,11 +201,11 @@
                     xAxis: {
                         type: "log",
                         label: 'Freq [rad/s]',
-                        domain: [0.001, 1000]
+                        domain: [0.001, 100]
                     },
                     yAxis: {
                         label: 'Magnitude [dB]',
-                        domain: [-50, 10]
+                        domain: [-100, 10]
                     },
                     grid: true,
                     disableZoom: true,
@@ -203,11 +225,11 @@
                     xAxis: {
                         type: "log",
                         label: 'Freq [rad/s]',
-                        domain: [0.001, 1000]
+                        domain: [0.001, 100]
                     },
                     yAxis: {
                         label: 'Phase [deg]',
-                        domain: [-90, 10]
+                        domain: [-180, 10]
                     },
                     grid: true,
                     disableZoom: true,
@@ -218,17 +240,70 @@
                         }]
                 });
 
-                // Try to simulate tf
-                console.log("Simulating tf...");
-                var t1 = performance.now();
-                var yy = sys1.lsim(1, cst.colon(0, 0.1, 100));
-                var t2 = performance.now();
-                console.log(yy);
-                console.log("took ", (t2 - t1), "ms to simulate 1000 points");
+                // Show the tf
+                csg.render_disp_unnum_tf(G1, ".tf-sys");
 
-                console.log("Converting another one...");
-                var G1 = cst.tf([2.5, 1], [4, 5, 9, 1]);
-                sys2 = G1.tf2ss();
+                // Add code to change one value
+                UIkit.util.on('#change-tf-param', 'change', function () {
+                    // Show the tf
+                    G1.a[1] = this.valueAsNumber;
+                    csg.render_disp_unnum_tf(G1, ".tf-sys");
+
+                    // Recompute/plot freq response
+                    var w = cst.logspace(-4, 4, 100);
+                    var rr = G1.freqresp(w);
+                    console.log(rr);
+                    var mp = cst.to_magph(rr);
+                    console.log(mp);
+
+                    // Plot
+                    var toplot = math.concat(math.transpose(w), math.transpose([mp[0]]));
+                    var fig2 = csg.plot({
+                        target: '#graph21',
+                        width: 1000,
+                        height: 350,
+                        xAxis: {
+                            type: "log",
+                            label: 'Freq [rad/s]',
+                            domain: [0.001, 100]
+                        },
+                        yAxis: {
+                            label: 'Magnitude [dB]',
+                            domain: [-100, 10]
+                        },
+                        grid: true,
+                        disableZoom: true,
+                        data: [{
+                                points: toplot,
+                                fnType: 'points',
+                                graphType: 'polyline'
+                            }]
+                    });
+
+                    var toplot = math.concat(math.transpose(w), math.transpose([mp[1]]));
+
+                    var fig3 = csg.plot({
+                        target: '#graph22',
+                        width: 1000,
+                        height: 350,
+                        xAxis: {
+                            type: "log",
+                            label: 'Freq [rad/s]',
+                            domain: [0.001, 100]
+                        },
+                        yAxis: {
+                            label: 'Phase [deg]',
+                            domain: [-180, 10]
+                        },
+                        grid: true,
+                        disableZoom: true,
+                        data: [{
+                                points: toplot,
+                                fnType: 'points',
+                                graphType: 'polyline'
+                            }]
+                    });
+                });
 
 
             </script>
