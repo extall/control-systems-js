@@ -107,8 +107,7 @@
 
 
             <p>And it has the following frequency domain characteristic (Bode diagram).</p>
-            <div id="graph21" style="width: 1000px; height: 350px;"></div>
-            <div id="graph22" style="width: 1000px; height: 350px;"></div>
+            <div class="bode-g1" style="width: 800px; height: 600px;"></div>
 
             <script type="text/javascript">
                 // Log to console
@@ -187,119 +186,28 @@
 
                 // Test freq domain chars
                 console.log("Computing freq domain chars of simple TF");
-                var w = cst.logspace(-4, 4, 100);
-                var rr = G1.freqresp(w);
-                var mp = cst.to_magph(rr,undefined,true);
-
-                // Plot
-                var toplot = math.concat(math.transpose(w), math.transpose([mp[0]]));
-                var fig2 = csg.plot({
-                    target: '#graph21',
-                    width: 1000,
-                    height: 350,
-                    xAxis: {
-                        type: "log",
-                        label: 'Freq [rad/s]',
-                        domain: [0.001, 100]
-                    },
-                    yAxis: {
-                        label: 'Magnitude [dB]',
-                        domain: [-100, 10]
-                    },
-                    grid: true,
-                    disableZoom: true,
-                    data: [{
-                            points: toplot,
-                            fnType: 'points',
-                            graphType: 'polyline'
-                        }]
-                });
-
-                var toplot = math.concat(math.transpose(w), math.transpose([mp[1]]));
-
-                var fig3 = csg.plot({
-                    target: '#graph22',
-                    width: 1000,
-                    height: 350,
-                    xAxis: {
-                        type: "log",
-                        label: 'Freq [rad/s]',
-                        domain: [0.001, 100]
-                    },
-                    yAxis: {
-                        label: 'Phase [deg]',
-                        domain: [-180, 10]
-                    },
-                    grid: true,
-                    disableZoom: true,
-                    data: [{
-                            points: toplot,
-                            fnType: 'points',
-                            graphType: 'polyline'
-                        }]
-                });
+                csg.bode(G1, undefined, ".bode-g1");
 
                 // Show the tf
                 csg.render_disp_unnum_tf(G1, ".tf-sys");
 
                 // Add code to change one value
                 UIkit.util.on('#change-tf-param', 'change', function () {
+
+                    // Time the change
+                    var t1 = performance.now();
+
                     // Show the tf
                     G1.a[1] = this.valueAsNumber;
                     csg.render_disp_unnum_tf(G1, ".tf-sys");
 
                     // Recompute/plot freq response
-                    var w = cst.logspace(-4, 4, 100);
-                    var rr = G1.freqresp(w);
-                    var mp = cst.to_magph(rr,undefined,true);
+                    csg.bode(G1, undefined, ".bode-g1");
 
-                    // Plot
-                    var toplot = math.concat(math.transpose(w), math.transpose([mp[0]]));
-                    var fig2 = csg.plot({
-                        target: '#graph21',
-                        width: 1000,
-                        height: 350,
-                        xAxis: {
-                            type: "log",
-                            label: 'Freq [rad/s]',
-                            domain: [0.001, 100]
-                        },
-                        yAxis: {
-                            label: 'Magnitude [dB]',
-                            domain: [-100, 10]
-                        },
-                        grid: true,
-                        disableZoom: true,
-                        data: [{
-                                points: toplot,
-                                fnType: 'points',
-                                graphType: 'polyline'
-                            }]
-                    });
+                    var t2 = performance.now();
 
-                    var toplot = math.concat(math.transpose(w), math.transpose([mp[1]]));
+                    console.log("Change took " + (t2-t1) + "ms to happen");
 
-                    var fig3 = csg.plot({
-                        target: '#graph22',
-                        width: 1000,
-                        height: 350,
-                        xAxis: {
-                            type: "log",
-                            label: 'Freq [rad/s]',
-                            domain: [0.001, 100]
-                        },
-                        yAxis: {
-                            label: 'Phase [deg]',
-                            domain: [-180, 10]
-                        },
-                        grid: true,
-                        disableZoom: true,
-                        data: [{
-                                points: toplot,
-                                fnType: 'points',
-                                graphType: 'polyline'
-                            }]
-                    });
                 });
 
 
