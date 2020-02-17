@@ -96,6 +96,7 @@
             </script>
 
             <div id="graph1" style="width: 800px; height: 600px;"></div>
+
             <h3>Bode plot of simple transfer function</h3>
             <p>The transfer function itself is given by</p>
             <div class="tf-sys"></div>
@@ -123,26 +124,7 @@
                 console.log(toplot);
 
                 // Plot
-                var fig1 = csg.plot({
-                    target: '#graph1',
-                    width: 800,
-                    height: 600,
-                    xAxis: {
-                        label: 'Time [s]',
-                        domain: [0, 100]
-                    },
-                    yAxis: {
-                        label: 'System output: y1',
-                        domain: [-10, 0]
-                    },
-                    grid: true,
-                    disableZoom: true,
-                    data: [{
-                            points: toplot,
-                            fnType: 'points',
-                            graphType: 'polyline'
-                        }]
-                });
+                csg.timeseries(t1, [y1[0]], "#graph1");
 
                 // Compute eigenvalues
                 a = [[3, -2], [4, -1]];
