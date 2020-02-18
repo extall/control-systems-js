@@ -48,6 +48,7 @@
 
         <!-- Plotting library -->
         <script src="lib/cst-graphics.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="css/cst-graphics.css">
 
     </head>
     <body>
@@ -110,13 +111,9 @@
             <div class="bode-g1" style="width: 800px; height: 600px;"></div>
 
             <script type="text/javascript">
-                // Log to console
-
 
                 console.log("Simulating and drawing");
 
-                // TODO: there is ambiguity with respect to matrix shapes
-                // must be fixed in BETA
                 var t1 = cst.colon(0, 0.1, 100);
                 var y1 = sys.lsim(1, t1);
                 var toplot = math.concat(math.transpose(t1), math.transpose([y1[0]]));

@@ -1,0 +1,52 @@
+.controls{
+    font-size: 0.8em;
+    text-align: center;
+    margin-bottom: 2.5em;
+}
+
+.simple-button{
+    padding: 0.2em;
+    margin-left: 0.1em;
+    margin-right: 0.1em;
+    border: 1px solid #0e6dcd;
+    color: #000;
+}
+
+.simple-button:hover{
+    background: #0e6dcd;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Table styling */
+table.csg-dual-matrix-input{
+    margin: auto;
+    border-collapse: collapse;
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+table.csg-dual-matrix-input td + td,
+table.csg-dual-matrix-input th + th { border-left: 1px solid #777; }
+
+table.csg-dual-matrix-input td + td:first-child,
+table.csg-dual-matrix-input th + th:last-child{ border-left: 2px solid #000; }
+
+table.csg-dual-matrix-input tr + tr { border-top: 1px solid #777; }
+table.csg-dual-matrix-input tr:first-child  + tr{ border-top: 2px solid #000; }
+
+table.csg-dual-matrix-input td,
+table.csg-dual-matrix-input th{
+    min-width: 25px;
+    min-height: 25px;
+    padding: 1em;
+    text-align: center;
+}
+
+table.csg-dual-matrix-input td input{
+    width: 40px;
+}
+
+table.csg-dual-matrix-input .highlighted{
+    background: #00cf8b;
+}
