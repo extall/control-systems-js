@@ -28,6 +28,16 @@
                                   supported by Chrome, Opera and Firefox */
 }
 
+/* Drawing canvas */
+canvas.csg-drawing-canvas{
+    background: #fff;
+    display: block;
+    border: 1px solid #E0E0E0;
+    cursor: crosshair;
+}
+
+
+
 /* Table styling */
 table.csg-dual-matrix-input{
     margin: auto;

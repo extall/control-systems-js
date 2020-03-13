@@ -21,7 +21,6 @@
         <script src="lib/cas/Solve.js" type="text/javascript"></script>
         <script src="lib/cas/Extra.js" type="text/javascript"></script>
 
-
         <!-- UI library: UIkit -->
         <script src="lib/uikit.min.js" type="text/javascript"></script>
         <script src="lib/uikit-icons.min.js" type="text/javascript"></script>
@@ -46,6 +45,9 @@
         <script src="katex/katex.min.js" type="text/javascript"></script>
         <script src="katex/auto-render.min.js" type="text/javascript"></script>
         <link rel="stylesheet" href="katex/katex.min.css">
+
+        <!-- Math OCR facilities -->
+        <script src="lib/ocr/ocr-mathpix.js" type="text/javascript"></script>
 
         <!-- WebGL visualization library: MathBox2 -->
         <!-- Not used right now -->
@@ -249,11 +251,28 @@
 
             <h3>Parsing LaTeX to get a transfer function</h3>
 
-            <p><button id="pastelatex">Paste LaTeX</button></p>
+            <p>Mathpix App ID: <input id="mathpix_appid" type="password" /> Mathpix API key: <input id="mathpix_apikey" type="password" /> <button id="parsecanvas">Parse canvas</button> <button id="clearcanvas">Clear canvas</button></p>
+
+            <div class="the-great-canvas-test" style="width: 800px; height: 600px;"></div>
 
             <script>
-                d3.select("#pastelatex").on("click", function(ev) {
-                    console.log(navigator.clipboard.readText());
+                var my_canvas = new csg.draw_canvas(".the-great-canvas-test");
+
+                d3.select("#parsecanvas").on("click", function(){
+                    var myappid = d3.select("#mathpix_appid").property("value");
+                    var myapikey = d3.select("#mathpix_apikey").property("value");
+                    var the_ocr = new ocr_mp(myappid, myapikey);
+                    var the_image = my_canvas.get_image_base64();
+                    var the_latex = the_ocr.send_image(the_image);
+
+                    // TODO: proceed with the rest of functionality for
+                    // parsing the TF, showing it below the field, and
+                    // doing linear simulation, etc.
+                    console.log(the_latex);
+                });
+
+                d3.select("#clearcanvas").on("click", function(){
+                    my_canvas.clear();
                 });
             </script>
 
