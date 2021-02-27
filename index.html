@@ -226,6 +226,7 @@
             <script type="text/javascript">
                 d3.select("#compfft").on("click", function(ev){
                     var utofft = my_draw.userdata.get_data().sub2d(":","",1,"");
+
                     var Y1 = Jmat.fft(utofft).e;
 
                     // At this point, due to lack of documentation, have to parse manually
