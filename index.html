@@ -208,15 +208,39 @@
 
             <h3>Signal Drawing</h3>
 
-            <p>This is an example of drawing a response manually.</p>
+            <p>This is an example of drawing a response manually. To see the difference between FFT of a pure harmonic component and a square wave, draw over the red and green dotted lines, respectively.</p>
             <div class="draw-signal" style="width: 800px; height: 600px;"></div>
 
             <script type="text/javascript">
-                var ts = 0.01;
+                var ts = 0.005;
                 var Fs = 1/ts;
                 var t3 = cst.colon(0,ts,1);
                 var L = t3.matsize()[1];
-                var my_draw = csg.draw_timeseries(t3,'.draw-signal');
+
+                // Draw some helper functions to assist the user in discovering the difference in FFT
+                var ysin = t3[0].map(function(t){
+                    return math.sin(t * 2 * math.pi);
+                });
+
+                var ysq = t3[0].map(function(t){
+                    return (t < 0.5 ? 1.0 : -1.0); // Not universal, create the sq function!
+                });
+
+                var bg = [];
+                bg.push({
+                    t: t3,
+                    u: [ysin],
+                    color: 'red',
+                    graphType: 'scatter'
+                },
+                    {
+                        t: t3,
+                        u: [ysq],
+                        color: 'green',
+                        graphType: 'scatter'
+                    });
+
+                var my_draw = csg.draw_timeseries(t3, '.draw-signal', {xLim: [0, 1], yLim: [-1.1, 1.1]}, bg);
 
             </script>
 
@@ -226,6 +250,9 @@
             <script type="text/javascript">
                 d3.select("#compfft").on("click", function(ev){
                     var utofft = my_draw.userdata.get_data().sub2d(":","",1,"");
+
+                    console.log("Can't read some stuf....");
+                    console.log(utofft);
 
                     var Y1 = Jmat.fft(utofft).e;
 
