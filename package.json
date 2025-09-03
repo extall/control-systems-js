@@ -1,0 +1,22 @@
+{
+  "name": "control-systems-js",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Modern control systems toolbox for Node.js and browsers",
+  "main": "src/index.js",
+  "browser": "dist/control-systems.js",
+  "scripts": {
+    "build": "rollup -c",
+    "lint": "eslint src test",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "mathjs": "^11.11.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.1",
+    "eslint": "^8.46.0",
+    "rollup": "^3.29.4",
+    "vitest": "^0.34.0"
+  }
+}
